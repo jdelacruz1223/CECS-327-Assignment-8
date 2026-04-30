@@ -1,28 +1,32 @@
 import socket
 import time
+import argparse
 
 def main():
-    #for quick testing purposes
-    # server_ip = input("server ip: \n'd' for localhost\n")
-    # if server_ip == 'd':
-    #     server_ip = 'localhost'
-    #     server_port = 1025
-    # else:
-    #     server_port = int(input("server port: "))
-    server_ip = str(input("server ip: "))
-    server_port = int(input("server port: "))
+    parser = argparse.ArgumentParser(description="327 Client")
+    parser.add_argument("--localhost", help="connect to localhost", action="store_true")
 
-    print(f"debug; connecting to {server_ip}:{server_port}")
+    args = parser.parse_args()
+
+    if args.localhost:
+        server_ip = "127.0.0.1"
+        server_port = 5000
+    else:
+        server_ip = str(input("server ip: "))
+        server_port = int(input("server port: "))
 
     tcp_client(server_ip,server_port)
 
 def tcp_client(server_ip:str, server_port:int):
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print(f"connecting to {server_ip}:{server_port}...")
-    tcp_socket.connect((server_ip, server_port))
-    print("connected")
 
     try:
+        print(f"connecting to {server_ip}:{server_port}...")
+
+        tcp_socket.connect((server_ip, server_port))
+        
+        print("connected")
+        
         while True:
             data = input("input message (q to quit): ")
             if data == "q":
