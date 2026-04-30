@@ -41,7 +41,7 @@ def tcp_client(server_ip:str, server_port:int):
         print("socket closed")
 
 def query_choice(tcp_socket):
-    print("1. What is the average moisture inside our kitche fridges in the past hours, week, and month?")
+    print("1. What is the average moisture inside our kitchen fridges in the past hours, week, and month?")
     print("2. What is the average water consumption per cycle across our smart dishwashers in the past hour, week and month?")
     print("3. Which house consumed more electricity in the past 24 hours, and by how much?")
 
@@ -50,8 +50,7 @@ def query_choice(tcp_socket):
     match choice:
         case "1":
             print("Query 1 selected\n\n")
-            # run query 1
-            query = str("What is the average moisture inside our kitche fridges in the past hours, week, and month?").strip()
+            query = str("What is the average moisture inside our kitchen fridges in the past hours, week, and month?").strip()
             tcp_socket.sendall(bytearray(query, encoding='utf-8'))
             return True
         case "2":
@@ -78,7 +77,8 @@ def server_response(tcp_socket):
         return False
 
     message = server_response.decode('utf-8')
-    print(f"server responded with: \"{message}\" \n\n")            
+    print("server responded with: ") # debug
+    print(f"\"{message}\"")            
     return True
 
 
