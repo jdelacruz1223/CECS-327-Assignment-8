@@ -1,5 +1,6 @@
 import socket
 import argparse
+from unittest import case
 
 def main():
     parser = argparse.ArgumentParser(description="327 Client")
@@ -27,14 +28,12 @@ def tcp_client(server_ip:str, server_port:int):
         print("connected")
 
         while True:
-            data = input("input message (q to quit): ")
-            if data == "q":
-                print("quitting..")
+            if not query_choice(tcp_socket):
                 break
 
-            tcp_socket.send(bytearray(data, encoding='utf-8'))
+            # tcp_socket.send(bytearray(data, encoding='utf-8'))
 
-            server_response = tcp_socket.recv(1024)
+            server_response = tcp_socket.recv(1024) # receive server response
             if not server_response:
                 print("server disconnected")
                 break
@@ -46,5 +45,35 @@ def tcp_client(server_ip:str, server_port:int):
     finally:
         tcp_socket.close()
         print("socket closed")
-        
+
+def query_choice(tcp_socket):
+    print("1. What is the average moisture inside our kitche fridges in the past hours, week, and month?")
+    print("2. What is the average water consumption per cycle across our smart dishwashers in the past hour, week and month?")
+    print("3. Which house consumed more electricity in the past 24 hours, and by how much?")
+
+    choice = input("Choose a query to run (q to quit): ")        
+
+    match choice:
+        case "1":
+            print("Query 1 selected\n\n")
+            # run query 1
+            query = "Query 1"
+            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            return True
+        case "2":
+            print("Query 2 selected\n\n")
+            query = "Query 2"
+            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            return True
+        case "3":
+            print("Query 3 selected\n\n")
+            query = "Query 3"
+            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            return True
+        case "q":
+            print("Quitting...")
+            return False
+        case _:        
+            print("Unknown query\n\n")
+            return True
 main()
