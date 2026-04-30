@@ -61,7 +61,7 @@ def query_choice(tcp_socket):
             print("Quitting...")
             exit()
         case _:        
-            print("Unknown query. Friendly message. \n\n")
+            print("Sorry, this query cannot be processed. Please try one of the supported queries. \n\n")
             tcp_socket.sendall(b'\x00')  # null byte for invalid response
         
 def server_response(tcp_socket):
