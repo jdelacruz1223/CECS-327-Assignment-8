@@ -1,6 +1,5 @@
 import socket
 import argparse
-from unittest import case
 
 def main():
     parser = argparse.ArgumentParser(description="327 Client")
@@ -16,6 +15,7 @@ def main():
         server_port = int(input("server port: "))
 
     tcp_client(server_ip,server_port)
+
 
 def tcp_client(server_ip:str, server_port:int):
     tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,6 +36,7 @@ def tcp_client(server_ip:str, server_port:int):
     finally:
         tcp_socket.close()
         print("socket closed")
+
 
 def query_choice(tcp_socket):
     print("1. What is the average moisture inside our kitchen fridges in the past hours, week, and month?")
@@ -66,6 +67,7 @@ def query_choice(tcp_socket):
         
 def server_response(tcp_socket):
     server_response = tcp_socket.recv(1024) # receive server response
+    
     if not server_response:
         print("server disconnected")
         return False
