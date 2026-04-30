@@ -25,14 +25,11 @@ def tcp_client(server_ip:str, server_port:int):
 
         tcp_socket.connect((server_ip, server_port))
         
-        print("connected")
+        print("connected\n")
 
         while True:
-            if not query_choice(tcp_socket):
-                break
-
-            if not server_response(tcp_socket):
-                break            
+            query_choice(tcp_socket)
+            server_response(tcp_socket)          
 
     except Exception as e:
         print(e)
@@ -52,23 +49,20 @@ def query_choice(tcp_socket):
             print("Query 1 selected\n\n")
             query = str("What is the average moisture inside our kitchen fridges in the past hours, week, and month?").strip()
             tcp_socket.sendall(bytearray(query, encoding='utf-8'))
-            return True
         case "2":
             print("Query 2 selected\n\n")
             query = str("What is the average water consumption per cycle across our smart dishwashers in the past hour, week and month?").strip()
             tcp_socket.sendall(bytearray(query, encoding='utf-8'))
-            return True
         case "3":
             print("Query 3 selected\n\n")
             query = str("Which house consumed more electricity in the past 24 hours, and by how much?").strip()
             tcp_socket.sendall(bytearray(query, encoding='utf-8'))
-            return True
         case "q":
             print("Quitting...")
-            return False
+            exit()
         case _:        
             print("Unknown query. Friendly message. \n\n")
-            return True
+            tcp_socket.sendall(b'\x00')  # null byte for invalid response
         
 def server_response(tcp_socket):
     server_response = tcp_socket.recv(1024) # receive server response
@@ -78,7 +72,7 @@ def server_response(tcp_socket):
 
     message = server_response.decode('utf-8')
     print("server responded with: ") # debug
-    print(f"\"{message}\"")            
+    print(f"\"{message}\"\n\n")            
     return True
 
 

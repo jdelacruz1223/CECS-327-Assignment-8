@@ -20,6 +20,9 @@ def tcp_server(args):
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
 
+    conn = psycopg.connect(connection_string)
+    cur = conn.cursor()     
+
     if args.localhost:
         port = 5000
         tcp_socket.bind(('localhost', port)) # attach socket to IP + port
@@ -37,20 +40,21 @@ def tcp_server(args):
 
             try:
                 while True:
-                    print("while start")
-                    
                     received = receive_data(incoming_socket)
 
                     # handle queries with response input here
-                    if received:
-                        data = query_handler(incoming_socket, received)
+                    data = query_handler(cur, received)
+                    print("data: ", data)
+                    if data:
+                        incoming_socket.sendall(bytearray(data, encoding='utf-8'))
 
             except Exception as e:
                 print(e)
             except KeyboardInterrupt:
-                exit
+                exit()
             finally:
                 incoming_socket.close()
+                conn.close()
                 print("client socket closed")
     finally:
         tcp_socket.close()
@@ -66,14 +70,22 @@ def receive_data(socket):
     print(f"received message: {data} \n\n")
     return data
 
-def query_handler(socket, query):
+def query_handler(cur, query):
     # handle queries here
     data = query
 
     # initialize db connection
     print("Connecting to database...")
-    conn = psycopg.connect(connection_string)
-    cur = conn.cursor()
+
+    # conn = psycopg.connect(connection_string)
+
+    # print(conn.info.host)
+    # print(conn.info.port)
+    # print(conn.info.dbname)
+    # print(conn.info.user)
+    # print(conn.info.status)  # ConnStatus.OK or ConnStatus.BAD
+
+    # cur = conn.cursor()
 
     try:
         match query:
@@ -95,11 +107,11 @@ def query_handler(socket, query):
                     """)
                 
                 row = cur.fetchone()
-                message = f"Hour: {row[0]},\nWeek: {row[1]},\nMonth: {row[2]}\n\n"
+                message = f"Hour: {round(row[0], 2)},\nWeek: {round(row[1], 2)},\nMonth: {round(row[2], 2)}\n"
 
-                socket.sendall(bytearray(message, encoding='utf-8'))
+                print(f"returning: {message}")
+                return message
 
-                
             case "What is the average water consumption per cycle across our smart dishwashers in the past hour, week and month?":
                 print("Query 2 selected\n\n")
                 cur.execute("""
@@ -117,22 +129,25 @@ def query_handler(socket, query):
                     """)
                 
                 row = cur.fetchone()
-                message = f"Hour: {row[0]},\nWeek: {row[1]},\nMonth: {row[2]}\n\n"
+                message = f"Hour: {round(row[0], 2)},\nWeek: {round(row[1], 2)},\nMonth: {round(row[2], 2)}\n"
 
-                socket.sendall(bytearray(message, encoding='utf-8'))
+                print(f"returning: {message}")
+                return message
 
             case "Which house consumed more electricity in the past 24 hours, and by how much?":
                 print("Not done yet! \n\n")
+                return "Query 3 not yet implemented."
                 # cur.execute("""
                     
                 #     """)
                 
                 # row = cur.fetchone()
                 # message = f"Hour: {row[0]},\nWeek: {row[1]},\nMonth: {row[2]}\n\n"
-                # socket.sendall(bytearray(message, encoding='utf-8'))
+                # return message
 
             case _:
-                print("Unknown query. Friendly message. \n\n")
+                message = "Sorry, this query cannot be processed. Please try one of the supported queries."
+                return message
 
         return data
         
@@ -141,6 +156,5 @@ def query_handler(socket, query):
     finally:
         print("Closing database connection")
         cur.close()
-        conn.close()
 
 main()
