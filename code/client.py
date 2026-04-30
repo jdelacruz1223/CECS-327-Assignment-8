@@ -31,15 +31,9 @@ def tcp_client(server_ip:str, server_port:int):
             if not query_choice(tcp_socket):
                 break
 
-            # tcp_socket.send(bytearray(data, encoding='utf-8'))
+            if not server_response(tcp_socket):
+                break            
 
-            server_response = tcp_socket.recv(1024) # receive server response
-            if not server_response:
-                print("server disconnected")
-                break
-
-            message = server_response.decode('utf-8')
-            print(f"server responded with: \"{message}\"")            
     except Exception as e:
         print(e)
     finally:
@@ -57,23 +51,35 @@ def query_choice(tcp_socket):
         case "1":
             print("Query 1 selected\n\n")
             # run query 1
-            query = "Query 1"
-            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            query = str("What is the average moisture inside our kitche fridges in the past hours, week, and month?").strip()
+            tcp_socket.sendall(bytearray(query, encoding='utf-8'))
             return True
         case "2":
             print("Query 2 selected\n\n")
-            query = "Query 2"
-            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            query = str("What is the average water consumption per cycle across our smart dishwashers in the past hour, week and month?").strip()
+            tcp_socket.sendall(bytearray(query, encoding='utf-8'))
             return True
         case "3":
             print("Query 3 selected\n\n")
-            query = "Query 3"
-            tcp_socket.send(bytearray(query, encoding='utf-8'))
+            query = str("Which house consumed more electricity in the past 24 hours, and by how much?").strip()
+            tcp_socket.sendall(bytearray(query, encoding='utf-8'))
             return True
         case "q":
             print("Quitting...")
             return False
         case _:        
-            print("Unknown query\n\n")
+            print("Unknown query. Friendly message. \n\n")
             return True
+        
+def server_response(tcp_socket):
+    server_response = tcp_socket.recv(1024) # receive server response
+    if not server_response:
+        print("server disconnected")
+        return False
+
+    message = server_response.decode('utf-8')
+    print(f"server responded with: \"{message}\" \n\n")            
+    return True
+
+
 main()

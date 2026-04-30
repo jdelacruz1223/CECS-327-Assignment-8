@@ -44,15 +44,11 @@ def tcp_server(args):
             try:
                 while True:
                     print("while start")
-                    received_data = incoming_socket.recv(1024)
-                    if not received_data:
-                        print("client disconnected")
-                        break
+                    
+                    response = receive_data(incoming_socket)
 
-                    message = received_data.decode('utf-8')
-                    response = message.upper()
-                    print(f"received message: {message}")
-                    incoming_socket.sendall(response.encode('utf-8'))
+                    send_data(incoming_socket, response)
+
             except Exception as e:
                 print(e)
             except KeyboardInterrupt:
@@ -63,5 +59,22 @@ def tcp_server(args):
     finally:
         tcp_socket.close()
         print("server socket closed")
+
+def receive_data(socket):
+    data = socket.recv(1024).decode('utf-8').strip() # receive data from client\
+
+    if not data:
+        print("client disconnected")
+        return None
+    
+    print(f"received message: {data} \n\n")
+    return data
+
+def send_data(socket, data):
+    data = data.upper()
+
+    # handle data processing here
+    
+    socket.sendall(bytearray(data, encoding='utf-8'))
 
 main()
