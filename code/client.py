@@ -1,5 +1,4 @@
 import socket
-import time
 import argparse
 
 def main():
@@ -26,7 +25,7 @@ def tcp_client(server_ip:str, server_port:int):
         tcp_socket.connect((server_ip, server_port))
         
         print("connected")
-        
+
         while True:
             data = input("input message (q to quit): ")
             if data == "q":

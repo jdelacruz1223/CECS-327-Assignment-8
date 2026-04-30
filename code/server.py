@@ -1,12 +1,18 @@
 import socket
 import psycopg
+import argparse
 
 connection_string = "postgresql://neondb_owner:npg_zlJOEZX04FoY@ep-empty-fire-ak1po874-pooler.c-3.us-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 def main():
-    tcp_server()
+    parser = argparse.ArgumentParser(description="327 Server")
+    parser.add_argument("--localhost", help="bind server to localhost", action="store_true")
 
-def tcp_server():
+    args = parser.parse_args()
+
+    tcp_server(args)
+
+def tcp_server(args):
     print("server start")
     
     # initialize db connection
@@ -16,12 +22,17 @@ def tcp_server():
     # cur.execute() # run queries
     # print(cur.fetchall()) # pring query to console
 
-    port = 1025
+    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
-    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create socket
-    # tcp_socket.bind(('localhost', port)) # attach socket to IP + port
-    tcp_socket.bind((hostname, port))
+
+    if args.localhost:
+        port = 5000
+        tcp_socket.bind(('localhost', port)) # attach socket to IP + port
+    else:
+        port = 1025
+        tcp_socket.bind((hostname, port))
+
     tcp_socket.listen(5) # listen for clients
     print(f"listening.. on {ip_address}:{port}")
 
