@@ -7,15 +7,29 @@ Our system follows a distributed client-server architecture integrated with two 
 - Justin (House 1)
 - Anna (House 2)
 
+## System Architecture
+The system consists of:
+1. TCP Client: Python interface for selecting and sending IoT data queries
+2. TCP Server: Multi-connection middleware that interfaces with two separate Neon PostgreSQL databases
+3. Data Sources: Virtual IoT devices (Fridge, Dishwasher) generating data through DataNiz
+
+## Implementation Details
+1. Data Connection and Retrieval
+2. Distributed Query Processing
+3. Query Completeness Determination
+4. DataNiz Metadata & Sharing
+   
 ---
 
 # Setup & Running Instruction
-Prerequisites
+## Prerequisites
 - Python 3
 - psycopg (pip install psycopg)
 
-Running the Server
+### Running the Server
+
 `python server.py --localhost`
 
-Running the Client
+### Running the Client
+
 `python client.py --localhost`
