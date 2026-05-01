@@ -73,7 +73,6 @@ def server_response(tcp_socket):
         return False
 
     message = server_response.decode('utf-8')
-    print("server responded with: ") # debug
     print(f"\"{message}\"\n\n")            
     return True
 
