@@ -14,25 +14,27 @@ The system consists of:
 3. Data Sources: Virtual IoT devices (Fridge, Dishwasher) generating data through DataNiz
 
 ## Implementation Details
-**1. Data Connection and Retrieval**
-
+1. Data Connection and Retrieval
 The server utilizes the `psycopg` library to maintain two connection strings:
    - Connection 1: Justin's database (table1_virtual)
    - Connection 2: Anna's database (iotdata_virtual)
    - The server uses SQL `json_each_text(payload)` to parse the unstructured JSON data sent by the IoT devices
-3. Distributed Query Processing
+     
+2. Distributed Query Processing
 When a user selects a query, the server:
    - Queries both databases simultaneously using house-specific table names
-   - Uses a `safe_avg` function to aggregate values acrss both environments, ensuring `None` values do not crash the calculations
+   - Uses a `safe_avg` function to aggregate values across both environments, ensuring `None` values do not crash the calculations
    - Converts all timestamps to PST and values to imperial units
-5. Query Completeness Determination
+
+3. Query Completeness Determination
 Datanix sharing is "forward-only," so each database only contains the peer's data starting from the sharing timestamp
    - Post sharing timestamp: `2026-04-30 10:22:09+00`
    - The server checks the query window for: 1 hour, 1 week, 1 month from the sharing timestamp
    - If the query requests data from before the timestamp, the server identifies the missing window and specifically retrieves that historical data from the peer's original database.
-7. DataNiz Metadata & Sharing
+     
+4. DataNiz Metadata & Sharing
    - The system uses device metadata (Fridge-Moisture or Dish-Ammeter) to choose between device types and house ownership
-   - Dataniz sharing feature used Topic Management and added an additional connection to stream data from the other's database. Pre-sharing includes local data while post-sharing includes both data streamed from local database and the peer's Dataniz sensors.
+   - Dataniz sharing feature used Topic Management and added connection to stream data from the other's database. Pre-sharing includes local data while post-sharing includes both data streamed from local database and the peer's Dataniz sensors.
 ---
 
 # Setup & Running Instruction
