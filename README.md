@@ -44,8 +44,28 @@ Datanix sharing is "forward-only," so each database only contains the peer's dat
 
 ### Running the Server
 
+With Python and packages installed, run:
+
+`python server.py`
+
+Server should connect to databases, listening, and able to process client requests on successful TCP client handshake.
+
+Optionally, should the server be run locally using localhost:5000, use the '--localhost' flag:
+
 `python server.py --localhost`
+
+Note: Sometimes server may hang on exit, with Ctrl+C or KeyboardInterrupt not working. In that case, kill Python process in terminal.
 
 ### Running the Client
 
+With Python and packages installed, run:
+
+`python client.py`
+
+Enter server IP and port, and run queries as  desired on successful TCP client handshake.
+
+Optionally, should the client be run locally using localhost:5000, use the '--localhost' flag:
+
 `python client.py --localhost`
+
+Note: Sometimes server may hang on exit, with Ctrl+C or KeyboardInterrupt not working. In that case, kill Python process in terminal.
